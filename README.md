@@ -9,4 +9,4 @@ The following files provide the basis for an Alexa skill allowing a user to ask 
 
 For more information about the NPS API, visit https://developer.nps.gov/api/index.htm.
 
-Thanks to [Modus Create] (http://moduscreate.com/build-an-alexa-skill-with-python-and-aws-lambda/) for the great tutorial that helped to get this project started.
+Thanks to Modus Create (http://moduscreate.com/build-an-alexa-skill-with-python-and-aws-lambda/) for the great tutorial that helped to get this project started.
