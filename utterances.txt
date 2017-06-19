@@ -1,0 +1,8 @@
+GetDescription tell me about {Park}
+GetDescription describe {Park}
+GetAlerts alerts for {Park}
+GetAlerts tell me the alerts for {Park}
+GetAlerts give me the alerts for {Park}
+GetNews news for {Park}
+GetNews tell me the news for {Park}
+GetNews give me the news for {Park}

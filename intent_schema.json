@@ -1,0 +1,40 @@
+{
+  "intents": [
+    {
+      "intent": "GetDescription",
+      "slots": [
+        {
+          "name": "Park",
+          "type": "LIST_OF_PARKS"
+        }
+      ]
+    },
+	{
+      "intent": "GetAlerts",
+      "slots": [
+        {
+          "name": "Park",
+          "type": "LIST_OF_PARKS"
+        }
+      ]
+    },
+    {
+      "intent": "GetNews",
+      "slots": [
+        {
+          "name": "Park",
+          "type": "LIST_OF_PARKS"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}
