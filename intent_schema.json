@@ -28,6 +28,15 @@
       ]
     },
     {
+      "intent": "GetParksByState",
+      "slots": [
+        {
+          "name": "State",
+          "type": "AMAZON.US_STATE"
+        }
+      ]
+    },
+    {
       "intent": "AMAZON.HelpIntent"
     },
     {
