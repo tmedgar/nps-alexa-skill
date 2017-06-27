@@ -32,6 +32,8 @@ def on_intent(intent_request, session):
         return get_park_alerts(intent)
     elif intent_name == "GetNews":
         return get_park_news(intent)
+    elif intent_name == "GetParksByState":
+        return get_parks_by_state(intent)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
@@ -136,6 +138,39 @@ def get_park_news(intent):
                 speech_output = "Here are the most current news items for " + park_name + ". "
                 for news_item in data["data"]:
                     speech_output += "News release: " + news_item["title"] + ". " + news_item["abstract"] + " "
+            reprompt_text = ""
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def get_parks_by_state(intent):
+    session_attributes = {}
+    card_title = "NPS Sites"
+    speech_output = "I'm not sure which state you wanted a list of parks for. " \
+                    "Please try again."
+    reprompt_text = "I'm not sure which state you wanted a list of parks for. " \
+                    "Try asking about parks in Maine or Wyoming for example."
+    should_end_session = False
+    if "State" in intent["slots"]:
+        state_name = intent["slots"]["State"]["value"]
+        state_code = get_state_code(state_name.lower())
+        if (state_code != "unkn"):
+            card_title = "National Park Serivce Sites for " + state_name.title()
+            # construct request and parse results
+            request_url = API_BASE + "parks?stateCode=" + state_code
+            req = urllib.request.Request(request_url,headers=HEADERS)
+            response = urllib.request.urlopen(req).read()
+            data = json.loads(response.decode('utf-8'))
+            if data["total"] < 1:
+                speech_output = "There are no National Park Service sites in " + state_name + "."
+            else:
+                parkCount = 0
+                speech_output = "The National Park Service sites in " + state_name + " are: "
+                for park in data["data"]:
+                    parkCount = parkCount + 1
+                    if parkCount < data["total"]:
+                        speech_output += park["fullName"] + ", "
+                    else:
+                        speech_output += "and " + park["fullName"] + "."
             reprompt_text = ""
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -1215,6 +1250,63 @@ def get_park_code(park_name):
         "zion": "zion",
         "zion national park": "zion",
     }.get(park_name, "unkn")
+
+def get_state_code(state_name):
+    return {
+        "alabama": "al",
+        "alaska": "ak",
+        "arizona": "az",
+        "arkansas": "ar",
+        "california": "ca",
+        "colorado": "co",
+        "connecticut": "ct",
+        "delaware": "de",
+        "florida": "fl",
+        "georgia": "ga",
+        "hawaii": "hi",
+        "idaho": "id",
+        "illinois": "il",
+        "indiana": "in",
+        "iowa": "ia",
+        "kansas": "ks",
+        "kentucky": "ky",
+        "louisiana": "la",
+        "maine": "me",
+        "maryland": "md",
+        "massachusetts": "ma",
+        "michigan": "mi",
+        "minnesota": "mn",
+        "mississippi": "ms",
+        "missouri": "mo",
+        "montana": "mt",
+        "nebraska": "ne",
+        "nevada": "nv",
+        "new hampshire": "nh",
+        "new jersey": "nj",
+        "new mexico": "nm",
+        "new york": "ny",
+        "north carolina": "nc",
+        "north dakota": "nd",
+        "ohio": "oh",
+        "oklahoma": "ok",
+        "oregon": "or",
+        "pennsylvania": "pa",
+        "rhode island": "ri",
+        "south carolina": "sc",
+        "south dakota": "sd",
+        "tennessee": "tn",
+        "texas": "tx",
+        "utah": "ut",
+        "vermont": "vt",
+        "virginia": "va",
+        "washington": "wa",
+        "west virginia": "wv",
+        "wisconsin": "wi",
+        "wyoming": "wy",
+        "guam": "gu",
+        "puerto rico": "pr",
+        "virgin islands": "vi",
+    }.get(state_name, "unkn")
 
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
