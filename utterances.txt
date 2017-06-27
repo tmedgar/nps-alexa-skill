@@ -6,3 +6,10 @@ GetAlerts give me the alerts for {Park}
 GetNews news for {Park}
 GetNews tell me the news for {Park}
 GetNews give me the news for {Park}
+GetParksByState parks in {State}
+GetParksByState list the parks in {State}
+GetParksByState what parks are in {State}
+GetParksByState what are the parks in {State}
+GetParksByState sites in {State}
+GetParksByState list the sites in {State}
+GetParksByState what are the sites in {State}
