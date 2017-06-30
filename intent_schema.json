@@ -28,7 +28,7 @@
       ]
     },
     {
-      "intent": "GetDYK",
+      "intent": "GetParkDYK",
       "slots": [
         {
           "name": "Park",
