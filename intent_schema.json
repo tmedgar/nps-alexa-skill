@@ -37,6 +37,9 @@
       ]
     },
     {
+      "intent": "GetRandomDYK"
+    },
+    {
       "intent": "GetParksByState",
       "slots": [
         {
