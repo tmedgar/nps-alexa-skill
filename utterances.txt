@@ -6,9 +6,14 @@ GetAlerts give me the alerts for {Park}
 GetNews news for {Park}
 GetNews tell me the news for {Park}
 GetNews give me the news for {Park}
-GetParkDYK trivia for {Park}
-GetParkDYK tell me trivia for {Park}
-GetParkDYK give me some trivia about {Park}
+GetParkDYK trivia about {Park}
+GetParkDYK fact about {Park}
+GetParkDYK tell me trivia about {Park}
+GetParkDYK tell me a fact about {Park}
+GetRandomDYK tell me a random national park fact
+GetRandomDYK tell me some national park trivia
+GetRandomDYK national park fact
+GetRandomDYK national park trivia
 GetParksByState parks in {State}
 GetParksByState list the parks in {State}
 GetParksByState what parks are in {State}
