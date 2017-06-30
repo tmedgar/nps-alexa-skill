@@ -2,6 +2,7 @@ import urllib.request
 import json
 
 API_BASE="https://developer.nps.gov/api/v0/"
+TRIVIA_BASE="https://dotding.com/nps/alexa/dyk.htm"
 HEADERS = {"Authorization":"API-KEY-GOES-HERE"}
 
 def lambda_handler(event, context):
@@ -32,6 +33,8 @@ def on_intent(intent_request, session):
         return get_park_alerts(intent)
     elif intent_name == "GetNews":
         return get_park_news(intent)
+    elif intent_name == "GetDYK":
+        return get_park_dyk(intent)
     elif intent_name == "GetParksByState":
         return get_parks_by_state(intent)
     elif intent_name == "AMAZON.HelpIntent":
@@ -138,6 +141,29 @@ def get_park_news(intent):
                 speech_output = "Here are the most current news items for " + park_name + ". "
                 for news_item in data["data"]:
                     speech_output += "News release: " + news_item["title"] + ". " + news_item["abstract"] + " "
+            reprompt_text = ""
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def get_park_dyk(intent):
+    session_attributes = {}
+    card_title = "Park Trivia"
+    speech_output = "I'm not sure which park you wanted trivia for. " \
+                    "Please try again."
+    reprompt_text = "I'm not sure which park you wanted trivia for. " \
+                    "Try asking about Acadia or Yellowstone for example."
+    should_end_session = False
+    if "Park" in intent["slots"]:
+        park_name = intent["slots"]["Park"]["value"]
+        park_code = get_park_code(park_name.lower())
+        if (park_code != "unkn"):
+            card_title = "Trivia for " + park_name.title()
+            # construct request and parse results
+            request_url = TRIVIA_BASE + "?park=" + park_code
+            req = urllib.request.Request(request_url)
+            response = urllib.request.urlopen(req).read()
+            data = json.loads(response.decode('utf-8'))
+            speech_output = data[0]['fact']
             reprompt_text = ""
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
