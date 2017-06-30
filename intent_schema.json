@@ -28,6 +28,15 @@
       ]
     },
     {
+      "intent": "GetDYK",
+      "slots": [
+        {
+          "name": "Park",
+          "type": "LIST_OF_PARKS"
+        }
+      ]
+    },
+    {
       "intent": "GetParksByState",
       "slots": [
         {
