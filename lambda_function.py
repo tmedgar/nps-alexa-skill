@@ -33,7 +33,7 @@ def on_intent(intent_request, session):
         return get_park_alerts(intent)
     elif intent_name == "GetNews":
         return get_park_news(intent)
-    elif intent_name == "GetDYK":
+    elif intent_name == "GetParkDYK":
         return get_park_dyk(intent)
     elif intent_name == "GetParksByState":
         return get_parks_by_state(intent)
@@ -157,13 +157,13 @@ def get_park_dyk(intent):
         park_name = intent["slots"]["Park"]["value"]
         park_code = get_park_code(park_name.lower())
         if (park_code != "unkn"):
-            card_title = "Trivia for " + park_name.title()
+            card_title = park_name.title() + " Trivia"
             # construct request and parse results
             request_url = TRIVIA_BASE + "?park=" + park_code
             req = urllib.request.Request(request_url)
             response = urllib.request.urlopen(req).read()
             data = json.loads(response.decode('utf-8'))
-            speech_output = data[0]['fact']
+            speech_output = data[0]['parkName'] + " Trivia: " + data[0]['fact']
             reprompt_text = ""
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
