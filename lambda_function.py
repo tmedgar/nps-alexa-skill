@@ -1,13 +1,13 @@
-import urllib.request
-import json
+import urllib.request, json, re
+from datetime import date
 
 API_BASE="https://developer.nps.gov/api/v0/"
 TRIVIA_BASE="https://dotding.com/nps/alexa/dyk.htm"
-HEADERS = {"Authorization":"API-KEY-GOES-HERE"}
+HEADERS = {"Authorization":"B1DB96EF-3BE0-49AC-B37C-5EB64DAEE148"}
 
 def lambda_handler(event, context):
     if (event["session"]["application"]["applicationId"] !=
-            "amzn1.ask.skill.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"):
+            "amzn1.ask.skill.fd48e3a6-05aa-418b-9d7b-802bffdf27cf"):
         raise ValueError("Invalid Application ID")
     if event["session"]["new"]:
         on_session_started({"requestId": event["request"]["requestId"]}, event["session"])
@@ -27,10 +27,16 @@ def on_launch(launch_request, session):
 def on_intent(intent_request, session):
     intent = intent_request["intent"]
     intent_name = intent_request["intent"]["name"]
-    if intent_name == "GetDescription":
-        return get_park_description(intent)
-    elif intent_name == "GetAlerts":
+    if intent_name == "GetAlerts":
         return get_park_alerts(intent)
+    elif intent_name == "GetContacts":
+        return get_park_contacts(intent)
+    elif intent_name == "GetDescription":
+        return get_park_description(intent)
+    elif intent_name == "GetDirections":
+        return get_park_directions(intent)
+    elif intent_name == "GetEvents":
+        return get_park_events(intent)
     elif intent_name == "GetNews":
         return get_park_news(intent)
     elif intent_name == "GetParkDYK":
@@ -68,6 +74,69 @@ def get_welcome_response():
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+def get_park_alerts(intent):
+    session_attributes = {}
+    card_title = "Park Alerts"
+    speech_output = "I'm not sure which park you wanted alerts for. " \
+                    "Please try again."
+    reprompt_text = "I'm not sure which park you wanted alerts for. " \
+                    "Try asking about Acadia or Yellowstone for example."
+    should_end_session = False
+    if "Park" in intent["slots"]:
+        park_name = intent["slots"]["Park"]["value"]
+        park_code = get_park_code(park_name.lower())
+        if (park_code != "unkn"):
+            card_title = "Alerts for " + park_name.title()
+            # construct request and parse results
+            request_url = API_BASE + "alerts?parkCode=" + park_code
+            req = urllib.request.Request(request_url,headers=HEADERS)
+            response = urllib.request.urlopen(req).read()
+            data = json.loads(response.decode('utf-8'))
+            if data["total"] < 1:
+                speech_output = "There are no active alerts for " + park_name.title()
+            else:
+                if(data["total"] < 2):
+                    speech_output = "There is " + str(data["total"]) + " alert for " + park_name.title() + ". "
+                else:
+                    speech_output = "There are " + str(data["total"]) + " alerts for " + park_name.title() + ". "
+                for alert in data["data"]:
+                    speech_output += alert["category"] + ": " + alert["title"] + ". " + alert["description"] + " "
+            reprompt_text = ""
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def get_park_contacts(intent):
+    session_attributes = {}
+    card_title = "Park Contacts"
+    speech_output = "I'm not sure which park you wanted contact information for. " \
+                    "Please try again."
+    reprompt_text = "I'm not sure which park you wanted contact information for. " \
+                    "Try asking about Acadia or Yellowstone for example."
+    should_end_session = False
+    if "Park" in intent["slots"]:
+        park_name = intent["slots"]["Park"]["value"]
+        park_code = get_park_code(park_name.lower())
+        if (park_code != "unkn"):
+            card_title = "Contact information for " + park_name.title()
+            # construct request and parse results
+            request_url = API_BASE + "parks?parkCode=" + park_code + "&fields=contacts"
+            req = urllib.request.Request(request_url,headers=HEADERS)
+            response = urllib.request.urlopen(req).read()
+            data = json.loads(response.decode('utf-8'))
+            park_full_name = data['data'][0]['fullName'].replace("&", "and")
+            speech_output = "In order to contact " + park_full_name + ", "
+            speech_output += "visit online at nps.gov/findapark"
+            if (data['data'][0]['contacts']['phoneNumbers'][0]['phoneNumber'] != ""):
+                clean_phone_number = str(data['data'][0]['contacts']['phoneNumbers'][0]['phoneNumber'])
+                formatted_phone_number = re.sub("(\d)(?=(\d{3})+(?!\d))", r"\1-", "%d" % int(clean_phone_number[:-1])) + clean_phone_number[-1]
+                speech_output += "; or call " + formatted_phone_number
+            if (data['data'][0]['contacts']['emailAddresses'][0]['emailAddress'] != ""):
+                speech_output += "; or email " + data['data'][0]['contacts']['emailAddresses'][0]['emailAddress']
+            speech_output += "."
+            reprompt_text = ""
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
 def get_park_description(intent):
     session_attributes = {}
     card_title = "Park Description"
@@ -91,34 +160,83 @@ def get_park_description(intent):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
-def get_park_alerts(intent):
+def get_park_directions(intent):
     session_attributes = {}
-    card_title = "Park Alerts"
-    speech_output = "I'm not sure which park you wanted alerts for. " \
+    card_title = "Park Directions"
+    speech_output = "I'm not sure which park you wanted directions to. " \
                     "Please try again."
-    reprompt_text = "I'm not sure which park you wanted alerts for. " \
+    reprompt_text = "I'm not sure which park you wanted directions to. " \
                     "Try asking about Acadia or Yellowstone for example."
     should_end_session = False
     if "Park" in intent["slots"]:
         park_name = intent["slots"]["Park"]["value"]
         park_code = get_park_code(park_name.lower())
         if (park_code != "unkn"):
-            card_title = "Alerts for " + park_name.title()
+            card_title = "Directions to " + park_name.title()
             # construct request and parse results
-            request_url = API_BASE + "alerts?parkCode=" + park_code
+            request_url = API_BASE + "parks?parkCode=" + park_code
             req = urllib.request.Request(request_url,headers=HEADERS)
             response = urllib.request.urlopen(req).read()
             data = json.loads(response.decode('utf-8'))
-            if data["total"] < 1:
-                speech_output = "There are no active alerts for " + park_name
+            park_full_name = data['data'][0]['fullName'].replace("&", "and")
+            if (data['data'][0]['directionsInfo'] != ""):
+                speech_output = "Directions to " + park_full_name + ": "
+                speech_output += data['data'][0]['directionsInfo']
+                reprompt_text = ""
             else:
-                speech_output = "There are " + str(data["total"]) + " alerts for " + park_name + ". "
-                for alert in data["data"]:
-                    speech_output += alert["category"] + ": " + alert["title"] + ". " + alert["description"] + " "
+                speech_output = park_full_name + " has not provided directions. " \
+                                "Please visit their website at nps.gov/" + park_code + "."
+                reprompt_text = ""
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def get_park_events(intent):
+    session_attributes = {}
+    card_title = "Park Events"
+    speech_output = "I'm not sure which park you wanted events for. " \
+                    "Please try again."
+    reprompt_text = "I'm not sure which park you wanted events for. " \
+                    "Try asking about Acadia or Yellowstone for example."
+    should_end_session = False
+    if "Park" in intent["slots"]:
+        park_name = intent["slots"]["Park"]["value"]
+        park_code = get_park_code(park_name.lower())
+        if (park_code != "unkn"):
+            card_title = "Events for " + park_name.title()
+            # construct request and parse results
+            request_url = API_BASE + "events?parkCode=" + park_code
+            req = urllib.request.Request(request_url,headers=HEADERS)
+            response = urllib.request.urlopen(req).read()
+            data = json.loads(response.decode('utf-8'))
+            # Loop through results for today's events
+            today = date.today()
+            todayStr = str(today.isoformat())
+            eventNum = 0
+            for event in data["data"]:
+                if todayStr in event["dates"]:
+                    eventNum = eventNum + 1
+            # Prepare event output
+            if eventNum < 1:
+                speech_output = "There are no events or programs happening at " + park_name.title() + " today."
+            else:
+                if eventNum == 1:
+                    speech_output = "There is one event at " + park_name.title() + " today. "
+                else:
+                    speech_output = "There are " + str(eventNum) + " events at " + park_name.title() + " today."
+                for event in data["data"]:
+                    if todayStr in event["dates"]:
+                        if event["time"] != "":
+                            if "to" in event["time"]:
+                                speech_output += " From " + event["time"].replace(",", " and ") + ", "
+                            else:
+                                speech_output += " At " + event["time"].replace(",", " and ") + ", "
+                        else:
+                            speech_output += " At an unspecified time, "
+                        speech_output += event["title"] + ": " + event["abstract"]
             reprompt_text = ""
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
-		
+
 def get_park_news(intent):
     session_attributes = {}
     card_title = "Park News"
@@ -182,7 +300,7 @@ def get_random_dyk(intent):
     speech_output = data[0]['parkName'] + " Trivia: " + data[0]['fact']
     reprompt_text = ""
     return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session)) 
+        card_title, speech_output, reprompt_text, should_end_session))        
 
 def get_parks_by_state(intent):
     session_attributes = {}
@@ -1292,7 +1410,7 @@ def get_park_code(park_name):
         "zion": "zion",
         "zion national park": "zion",
     }.get(park_name, "unkn")
-
+    
 def get_state_code(state_name):
     return {
         "alabama": "al",
