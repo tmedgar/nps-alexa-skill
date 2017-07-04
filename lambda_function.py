@@ -256,9 +256,9 @@ def get_park_news(intent):
             response = urllib.request.urlopen(req).read()
             data = json.loads(response.decode('utf-8'))
             if data["total"] < 1:
-                speech_output = "There is no current news for " + park_name
+                speech_output = "There is no current news for " + park_name.title() + "."
             else:
-                speech_output = "Here are the most current news items for " + park_name + ". "
+                speech_output = "Here are the most current news items for " + park_name.title() + ". "
                 for news_item in data["data"]:
                     speech_output += "News release: " + news_item["title"] + ". " + news_item["abstract"] + " "
             reprompt_text = ""
