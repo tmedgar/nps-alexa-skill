@@ -1,11 +1,41 @@
-GetDescription tell me about {Park}
-GetDescription describe {Park}
 GetAlerts alerts for {Park}
 GetAlerts tell me the alerts for {Park}
 GetAlerts give me the alerts for {Park}
+GetAlerts what are the alerts for {Park}
+GetContacts contact information for {Park}
+GetContacts tell me the contact information for {Park}
+GetContacts give me the contact information for {Park}
+GetContacts what is the contact information for {Park}
+GetContacts website for {Park}
+GetContacts tell me the website for {Park}
+GetContacts give me the website for {Park}
+GetContacts what is the website for {Park}
+GetContacts email address for {Park}
+GetContacts tell me the email address for {Park}
+GetContacts give me the email address for {Park}
+GetContacts what is the email address for {Park}
+GetContacts phone number for {Park}
+GetContacts tell me the phone number for {Park}
+GetContacts give me the phone number for {Park}
+GetContacts what is the phone number for {Park}
+GetDescription tell me about {Park}
+GetDescription describe {Park}
+GetDirections directions to {Park}
+GetDirections tell me the directions to {Park}
+GetDirections give me directions to {Park}
+GetDirections what are the directions to {Park}
+GetEvents events for {Park}
+GetEvents today's events for {Park}
+GetEvents tell me the events for {Park}
+GetEvents give me the events for {Park}
+GetEvents what are the events for {Park}
+GetEvents tell me today's events for {Park}
+GetEvents give me today's events for {Park}
+GetEvents what are today's events for {Park}
 GetNews news for {Park}
 GetNews tell me the news for {Park}
 GetNews give me the news for {Park}
+GetNews what is the news for {Park}
 GetParkDYK trivia about {Park}
 GetParkDYK fact about {Park}
 GetParkDYK tell me trivia about {Park}
