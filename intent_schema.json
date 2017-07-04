@@ -1,6 +1,24 @@
 {
   "intents": [
-    {
+	{
+      "intent": "GetAlerts",
+      "slots": [
+        {
+          "name": "Park",
+          "type": "LIST_OF_PARKS"
+        }
+      ]
+    },
+	{
+      "intent": "GetContacts",
+      "slots": [
+        {
+          "name": "Park",
+          "type": "LIST_OF_PARKS"
+        }
+      ]
+    },
+	{
       "intent": "GetDescription",
       "slots": [
         {
@@ -10,7 +28,16 @@
       ]
     },
 	{
-      "intent": "GetAlerts",
+      "intent": "GetDirections",
+      "slots": [
+        {
+          "name": "Park",
+          "type": "LIST_OF_PARKS"
+        }
+      ]
+    },
+	{
+      "intent": "GetEvents",
       "slots": [
         {
           "name": "Park",
@@ -27,7 +54,7 @@
         }
       ]
     },
-    {
+	{
       "intent": "GetParkDYK",
       "slots": [
         {
@@ -36,10 +63,10 @@
         }
       ]
     },
-    {
+	{
       "intent": "GetRandomDYK"
     },
-    {
+	{
       "intent": "GetParksByState",
       "slots": [
         {
