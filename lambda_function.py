@@ -58,7 +58,7 @@ def on_session_ended(session_ended_request, session):
 
 def handle_session_end_request():
     card_title = "NPS Ranger - Thanks"
-    speech_output = "Thank you for using the NPS Ranger skill. Be sure to visit one of your National Park Service sites soon!"
+    speech_output = "Thank you for using the NPS Ranger skill. Be sure to visit one of your National Park Service sites soon! Learn more at www.nps.gov."
     should_end_session = True
     return build_response({}, build_speechlet_response(card_title, speech_output, None, should_end_session))
 
