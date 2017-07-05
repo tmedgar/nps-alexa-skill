@@ -22,4 +22,4 @@ An [MP3 demonstration of the NPS Ranger skill](http://dotding.com/nps/alexa/asse
 
 For more information about the NPS API, visit https://developer.nps.gov/api/index.htm.
 
-Thanks to Modus Create (http://moduscreate.com/build-an-alexa-skill-with-python-and-aws-lambda/) for the great tutorial that helped to get this project started.
+Thanks to [Modus Create](http://moduscreate.com/build-an-alexa-skill-with-python-and-aws-lambda/) for the great tutorial that helped to get this project started.
