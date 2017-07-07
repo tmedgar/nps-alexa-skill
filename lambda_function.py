@@ -1,5 +1,5 @@
 import urllib.request, json, re
-from datetime import date
+from datetime import date, datetime
 
 API_BASE="https://developer.nps.gov/api/v0/"
 TRIVIA_BASE="https://dotding.com/nps/alexa/dyk.htm"
@@ -208,23 +208,27 @@ def get_park_events(intent):
             req = urllib.request.Request(request_url,headers=HEADERS)
             response = urllib.request.urlopen(req).read()
             data = json.loads(response.decode('utf-8'))
-            # Loop through results for today's events
-            today = date.today()
-            todayStr = str(today.isoformat())
+            # Determine if day was passed and set variables
+            if "value" in intent["slots"]["Day"]:
+                day = intent["slots"]["Day"]["value"]
+            else:
+                day = str(date.today())
+            day_text = datetime.strptime(day, '%Y-%m-%d').strftime('%A, %B %d')
             eventNum = 0
+            # Loop through results for the day's events
             for event in data["data"]:
-                if todayStr in event["dates"]:
+                if day in event["dates"]:
                     eventNum = eventNum + 1
             # Prepare event output
             if eventNum < 1:
-                speech_output = "There are no events or programs happening at " + park_name.title() + " today."
+                speech_output = "There are no events or programs happening at " + park_name.title() + " on " + day_text + "."
             else:
                 if eventNum == 1:
-                    speech_output = "There is one event at " + park_name.title() + " today. "
+                    speech_output = "There is one event at " + park_name.title() + " on " + day_text + "."
                 else:
-                    speech_output = "There are " + str(eventNum) + " events at " + park_name.title() + " today."
+                    speech_output = "There are " + str(eventNum) + " events at " + park_name.title() + " on " + day_text + "."
                 for event in data["data"]:
-                    if todayStr in event["dates"]:
+                    if day in event["dates"]:
                         if event["time"] != "":
                             if "to" in event["time"]:
                                 speech_output += " From " + event["time"].replace(",", " and ") + ", "
