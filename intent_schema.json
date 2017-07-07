@@ -42,6 +42,10 @@
         {
           "name": "Park",
           "type": "LIST_OF_PARKS"
+        },
+		{
+          "name": "Day",
+          "type": "AMAZON.DATE"
         }
       ]
     },
