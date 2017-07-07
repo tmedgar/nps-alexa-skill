@@ -25,13 +25,17 @@ GetDirections tell me the directions to {Park}
 GetDirections give me directions to {Park}
 GetDirections what are the directions to {Park}
 GetEvents events for {Park}
-GetEvents today's events for {Park}
 GetEvents tell me the events for {Park}
 GetEvents give me the events for {Park}
 GetEvents what are the events for {Park}
-GetEvents tell me today's events for {Park}
-GetEvents give me today's events for {Park}
-GetEvents what are today's events for {Park}
+GetEvents {Day} events for {Park}
+GetEvents tell me {Day} events for {Park}
+GetEvents give me {Day} events for {Park}
+GetEvents what are {Day} events for {Park}
+GetEvents events for {Park} on {Day}
+GetEvents tell me the events for {Park} on {Day}
+GetEvents give me the events for {Park} on {Day}
+GetEvents what are the events for {Park} on {Day}
 GetNews news for {Park}
 GetNews tell me the news for {Park}
 GetNews give me the news for {Park}
